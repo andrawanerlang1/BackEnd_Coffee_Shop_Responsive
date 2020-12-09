@@ -10,3 +10,5 @@ using postman with localhost database :
 post new product -- http://localhost:3000/product
 
 get product by name -- http://localhost:3000/product?productName=smoothies&page=1&limit=2
+
+get product by ID -- http://localhost:3000/product/10   *10 is the input ID for product*
