@@ -4,8 +4,11 @@ const {
   postProductModel,
   patchProductModel,
   getProductCountModel,
+  getProductCategoryCountModel,
+  getProductNameCountModel,
   getProductByNameModel,
-  getProductNameCountModel
+  deleteProductModel,
+  getProductByCategoryModel
 } = require('../model/product')
 const helper = require('../helper/response')
 const qs = require('querystring')
@@ -13,13 +16,21 @@ const qs = require('querystring')
 module.exports = {
   getProduct: async (request, response) => {
     try {
-      let { page, limit, productName, productId } = request.query
+      let { page, limit, productName, productId, category } = request.query
       page = parseInt(page)
       limit = parseInt(limit)
+      category = parseInt(category)
       const totalData = productName
         ? await getProductNameCountModel(productName)
+        : category
+        ? await getProductCategoryCountModel(category)
         : await getProductCountModel()
       const totalPage = Math.ceil(totalData / limit)
+      if (page > totalPage) {
+        page = 1
+      } else {
+        page = page
+      }
       const offset = page * limit - limit
       const prevLink =
         page > 1
@@ -54,6 +65,24 @@ module.exports = {
             response,
             200,
             `Product with the name ${productName} does not exist`,
+            result
+          )
+        }
+      } else if (category) {
+        const result = await getProductByCategoryModel(category, limit, offset)
+        if (result.length > 0) {
+          return helper.response(
+            response,
+            200,
+            `Success Get Product with Category ${category}`,
+            result,
+            pageInfo
+          )
+        } else {
+          return helper.response(
+            response,
+            404,
+            `Product with id : ${productId} is not found`,
             result
           )
         }
@@ -161,7 +190,6 @@ module.exports = {
       product_price ? (setData.product_price = product_price) : setData
       product_desc ? (setData.product_desc = product_desc) : setData
       product_stock ? (setData.product_stock = product_stock) : setData
-      console.log(setData)
       const checkId = await getProductByIdModel(id)
       if (checkId.length > 0) {
         // proses update data
@@ -170,6 +198,29 @@ module.exports = {
           response,
           200,
           'Succeed Updating the Product',
+          result
+        )
+      } else {
+        return helper.response(
+          response,
+          404,
+          `Product with id : ${id} is not found`
+        )
+      }
+    } catch (error) {
+      return helper.response(response, 400, 'Bad Request', error)
+    }
+  },
+  deleteProduct: async (request, response) => {
+    try {
+      const { id } = request.params
+      const checkId = await getProductByIdModel(id)
+      if (checkId.length > 0) {
+        const result = await deleteProductModel(id)
+        return helper.response(
+          response,
+          200,
+          `Succeed Deleting the Product by id ${id}`,
           result
         )
       } else {
