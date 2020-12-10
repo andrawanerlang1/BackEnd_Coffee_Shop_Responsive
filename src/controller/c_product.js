@@ -13,7 +13,7 @@ const qs = require('querystring')
 module.exports = {
   getProduct: async (request, response) => {
     try {
-      let { page, limit, productName } = request.query
+      let { page, limit, productName, productId } = request.query
       page = parseInt(page)
       limit = parseInt(limit)
       const totalData = productName
@@ -57,6 +57,23 @@ module.exports = {
             result
           )
         }
+      } else if (productId) {
+        const result = await getProductByIdModel(productId)
+        if (result.length > 0) {
+          return helper.response(
+            response,
+            200,
+            `Success Get Product with ID ${productId}`,
+            result
+          )
+        } else {
+          return helper.response(
+            response,
+            404,
+            `Product with id : ${productId} is not found`,
+            result
+          )
+        }
       } else {
         const result = await getProductModel(limit, offset)
         return helper.response(
@@ -65,29 +82,6 @@ module.exports = {
           'Success Get Product',
           result,
           pageInfo
-        )
-      }
-    } catch (error) {
-      return helper.response(response, 400, 'Bad Request', error)
-    }
-  },
-  getProductById: async (request, response) => {
-    try {
-      const { id } = request.params
-      const result = await getProductByIdModel(id)
-      if (result.length > 0) {
-        return helper.response(
-          response,
-          200,
-          'Success Get Product by ID',
-          result
-        )
-      } else {
-        return helper.response(
-          response,
-          404,
-          `Product with id : ${id} is not found`,
-          result
         )
       }
     } catch (error) {
@@ -108,7 +102,7 @@ module.exports = {
         product_desc,
         product_stock
       } = request.body
-      if (!product_name || !product_price || !product_desc) {
+      if (!product_name || !product_price || !product_desc || !fav) {
         return helper.response(response, 400, 'Please Input All Data!')
       }
       const setData = {
@@ -134,22 +128,44 @@ module.exports = {
       const { id } = request.params
       const {
         category_id,
+        size_id,
+        deliver_id,
+        start_id,
+        end_id,
+        fav,
         product_name,
         product_price,
-        product_status
+        product_desc,
+        product_stock
       } = request.body
-      const setData = {
-        category_id,
-        product_name,
-        product_price,
-        product_updated_at: new Date(),
-        product_status
+      let setData = {
+        // category_id,
+        // size_id,
+        // deliver_id,
+        // start_id,
+        // end_id,
+        // fav,
+        // product_name,
+        // product_price,
+        // product_desc,
+        // product_stock,
+        product_updated_at: new Date()
       }
+      category_id ? (setData.category_id = category_id) : setData
+      size_id ? (setData.size_id = size_id) : setData
+      deliver_id ? (setData.deliver_id = deliver_id) : setData
+      start_id ? (setData.start_id = start_id) : setData
+      end_id ? (setData.end_id = end_id) : setData
+      fav ? (setData.fav = fav) : setData
+      product_name ? (setData.product_name = product_name) : setData
+      product_price ? (setData.product_price = product_price) : setData
+      product_desc ? (setData.product_desc = product_desc) : setData
+      product_stock ? (setData.product_stock = product_stock) : setData
+      console.log(setData)
       const checkId = await getProductByIdModel(id)
       if (checkId.length > 0) {
         // proses update data
         const result = await patchProductModel(setData, id)
-        console.log(result)
         return helper.response(
           response,
           200,
