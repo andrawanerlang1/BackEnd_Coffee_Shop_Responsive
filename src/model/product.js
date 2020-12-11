@@ -43,11 +43,11 @@ module.exports = {
       )
     })
   },
-  getDeleteProductByNameModel: (productName) => {
+  getProductByCategorySortModel: (category, limit, offset, sort) => {
     return new Promise((resolve, reject) => {
       connection.query(
-        'SELECT * FROM product WHERE product_name = ?',
-        productName,
+        `SELECT * FROM product WHERE category_id = ? ORDER BY ${sort} LIMIT ? OFFSET ? `,
+        [category, limit, offset],
         (error, result) => {
           !error ? resolve(result) : reject(new Error(error))
         }

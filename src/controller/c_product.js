@@ -8,7 +8,8 @@ const {
   getProductNameCountModel,
   getProductByNameModel,
   deleteProductModel,
-  getProductByCategoryModel
+  getProductByCategoryModel,
+  getProductByCategorySortModel
 } = require('../model/product')
 const helper = require('../helper/response')
 const qs = require('querystring')
@@ -16,7 +17,14 @@ const qs = require('querystring')
 module.exports = {
   getProduct: async (request, response) => {
     try {
-      let { page, limit, productName, productId, category } = request.query
+      let {
+        page,
+        limit,
+        productName,
+        productId,
+        category,
+        sort
+      } = request.query
       page = parseInt(page)
       limit = parseInt(limit)
       category = parseInt(category)
@@ -69,7 +77,9 @@ module.exports = {
           )
         }
       } else if (category) {
-        const result = await getProductByCategoryModel(category, limit, offset)
+        const result = sort
+          ? await getProductByCategorySortModel(category, limit, offset, sort)
+          : await getProductByCategoryModel(category, limit, offset)
         if (result.length > 0) {
           return helper.response(
             response,
