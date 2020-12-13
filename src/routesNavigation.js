@@ -1,8 +1,10 @@
 const router = require('express').Router()
 const product = require('./routes/r_product')
-const order = require('./routes/r_order')
+const history = require('./routes/r_history')
+const historyDetail = require('./routes/r_history_detail')
 
 router.use('/product', product)
-router.use('/order', order)
+router.use('/history', history)
+router.use('/historydetail', historyDetail)
 
 module.exports = router

@@ -12,10 +12,31 @@ module.exports = {
       )
     })
   },
+  getProductSortModel: (limit, offset, sort) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        `SELECT * FROM product ORDER BY ${sort} LIMIT ? OFFSET ?`,
+        [limit, offset],
+        (error, result) => {
+          !error ? resolve(result) : reject(new Error(error))
+        }
+      )
+    })
+  },
   getProductByNameModel: (productName, limit, offset) => {
     return new Promise((resolve, reject) => {
       connection.query(
         `SELECT * FROM product WHERE product_name LIKE '%${productName}%' LIMIT ${limit} OFFSET ${offset}`,
+        (error, result) => {
+          !error ? resolve(result) : reject(new Error(error))
+        }
+      )
+    })
+  },
+  getProductByNameSortModel: (productName, limit, offset, sort) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        `SELECT * FROM product WHERE product_name LIKE '%${productName}%' ORDER BY ${sort} LIMIT ${limit} OFFSET ${offset}`,
         (error, result) => {
           !error ? resolve(result) : reject(new Error(error))
         }

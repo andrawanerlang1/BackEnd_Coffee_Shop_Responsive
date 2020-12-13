@@ -1,5 +1,6 @@
 const {
   getProductModel,
+  getProductSortModel,
   getProductByIdModel,
   postProductModel,
   patchProductModel,
@@ -7,6 +8,7 @@ const {
   getProductCategoryCountModel,
   getProductNameCountModel,
   getProductByNameModel,
+  getProductByNameSortModel,
   deleteProductModel,
   getProductByCategoryModel,
   getProductByCategorySortModel
@@ -59,7 +61,9 @@ module.exports = {
         prevLink: prevLink && `http://localhost:3000/product?${prevLink}`
       }
       if (productName) {
-        const result = await getProductByNameModel(productName, limit, offset)
+        const result = sort
+          ? await getProductByNameSortModel(productName, limit, offset, sort)
+          : await getProductByNameModel(productName, limit, offset)
         if (result.length > 0) {
           return helper.response(
             response,
@@ -114,7 +118,9 @@ module.exports = {
           )
         }
       } else {
-        const result = await getProductModel(limit, offset)
+        const result = sort
+          ? await getProductSortModel(limit, offset, sort)
+          : await getProductModel(limit, offset)
         return helper.response(
           response,
           200,
