@@ -96,13 +96,22 @@ module.exports = {
       const setData = {
         history_status
       }
-      const result = await patchHistoryModel(setData, id)
-      return helper.response(
-        response,
-        200,
-        'Success Patching History Status',
-        result
-      )
+      const checkId = await getHistoryByIdModel(id)
+      if (checkId.length > 0) {
+        const result = await patchHistoryModel(setData, id)
+        return helper.response(
+          response,
+          200,
+          'Success Patching History Status',
+          result
+        )
+      } else {
+        return helper.response(
+          response,
+          404,
+          `History with id : ${id} is not found`
+        )
+      }
     } catch (error) {
       return helper.response(response, 400, 'Bad Request', error)
     }

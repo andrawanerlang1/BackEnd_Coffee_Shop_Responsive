@@ -1,6 +1,7 @@
 const {
   postHistoryDetailModel,
-  getHistoryByIdModel
+  getHistoryByIdModel,
+  getHistoryByHistoryIdModel
 } = require('../model/history_detail')
 const helper = require('../helper/response')
 // const qs = require('querystring')
@@ -38,22 +39,41 @@ module.exports = {
   },
   getHistory: async (request, response) => {
     try {
-      const { id } = request.query
-      const result = await getHistoryByIdModel(id)
-      if (result.length > 0) {
-        return helper.response(
-          response,
-          200,
-          `Success Get History-detail with ID ${id}`,
-          result
-        )
+      const { id, history_id } = request.query
+      if (id) {
+        const result = await getHistoryByIdModel(id)
+        if (result.length > 0) {
+          return helper.response(
+            response,
+            200,
+            `Success Get History-detail with ID ${id}`,
+            result
+          )
+        } else {
+          return helper.response(
+            response,
+            404,
+            `History-detail with id : ${id} is not found`,
+            result
+          )
+        }
       } else {
-        return helper.response(
-          response,
-          404,
-          `History-detail with id : ${id} is not found`,
-          result
-        )
+        const result = await getHistoryByHistoryIdModel(history_id)
+        if (result.length > 0) {
+          return helper.response(
+            response,
+            200,
+            `Success Get History-detail with history-ID ${history_id}`,
+            result
+          )
+        } else {
+          return helper.response(
+            response,
+            404,
+            `History-detail with id : ${id} is not found`,
+            result
+          )
+        }
       }
     } catch (error) {
       return helper.response(response, 400, 'Bad Request', error)

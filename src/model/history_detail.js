@@ -29,5 +29,15 @@ module.exports = {
         }
       )
     })
+  },
+  getHistoryByHistoryIdModel: (history_id) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        `SELECT * FROM history_detail WHERE history_id = ${history_id}`,
+        (error, result) => {
+          !error ? resolve(result) : reject(new Error(error))
+        }
+      )
+    })
   }
 }
