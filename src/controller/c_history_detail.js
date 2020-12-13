@@ -38,7 +38,7 @@ module.exports = {
   },
   getHistory: async (request, response) => {
     try {
-      let { id } = request.query
+      const { id } = request.query
       const result = await getHistoryByIdModel(id)
       if (result.length > 0) {
         return helper.response(

@@ -33,8 +33,8 @@ module.exports = {
       const totalData = productName
         ? await getProductNameCountModel(productName)
         : category
-        ? await getProductCategoryCountModel(category)
-        : await getProductCountModel()
+          ? await getProductCategoryCountModel(category)
+          : await getProductCountModel()
       const totalPage = Math.ceil(totalData / limit)
       if (page > totalPage) {
         page = 1
@@ -183,7 +183,7 @@ module.exports = {
         product_desc,
         product_stock
       } = request.body
-      let setData = {
+      const setData = {
         // category_id,
         // size_id,
         // deliver_id,
