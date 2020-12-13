@@ -23,14 +23,15 @@
 5. Create a database with the name #coffee_shop, and Import file sql to **phpmyadmin**
 6. Open Postman desktop application or Chrome web app extension that has installed before
 7. Choose HTTP Method and enter request url.(ex. localhost:3000/)
-8. You can see all the end point [here](https://documenter.getpostman.com/view/9852901/TVmS8Fce)
+8. You can see all the end point [here](https://documenter.getpostman.com/view/13455063/TVsoGVft)
 
 ## Set up .env file
 
 Open .env file on your favorite code editor, and copy paste this code below :
 
 ```
-DB_HOST=localhost // Database host
+host = localhost  //database host
+user = root       //database user
 ```
 
 ## PostMan Documentation
