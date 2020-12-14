@@ -23,7 +23,9 @@ module.exports = {
   getHistoryByIdModel: (id) => {
     return new Promise((resolve, reject) => {
       connection.query(
-        `SELECT * FROM history WHERE history_id = ${id}`,
+        `SELECT account.account_display_name, account.account_adress, history.history_id, 
+        history.history_subtotal, history.history_payment, history.history_status FROM history INNER JOIN 
+        account ON history.account_id = account.account_id WHERE history_id = ${id}`,
         (error, result) => {
           !error ? resolve(result) : reject(new Error(error))
         }
@@ -34,6 +36,16 @@ module.exports = {
     return new Promise((resolve, reject) => {
       connection.query(
         `SELECT * FROM history WHERE account_id = ${account_id}`,
+        (error, result) => {
+          !error ? resolve(result) : reject(new Error(error))
+        }
+      )
+    })
+  },
+  getHistoryJoinModel: (account_id) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        `SELECT  FROM history WHERE account_id = ${account_id}`,
         (error, result) => {
           !error ? resolve(result) : reject(new Error(error))
         }
