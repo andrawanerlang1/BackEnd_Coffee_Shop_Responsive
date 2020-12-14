@@ -3,6 +3,7 @@ const morgan = require('morgan')
 const bodyParser = require('body-parser')
 const routesNavigation = require('./src/routesNavigation')
 const cors = require('cors')
+require('dotenv').config()
 // =========================================================================
 const app = express()
 app.use(morgan('dev'))
@@ -18,6 +19,7 @@ app.use((request, response, next) => {
   next()
 })
 app.use('/', routesNavigation)
+require('dotenv').config()
 
 // ==================================================================================
 
@@ -25,6 +27,6 @@ app.get('*', (request, response) => {
   response.status(404).send('Path Not Found')
 })
 
-app.listen(3000, () => {
+app.listen(process.env.port, () => {
   console.log('Express app is listening on port 3000')
 })
