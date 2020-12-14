@@ -1,7 +1,8 @@
 <h1 align="center">ExpressJS - #Coffee Shop RESTfull API</h1>
 
-#background_projek. [More about Express](https://en.wikipedia.org/wiki/Express.js)
-Project ini dikerjakan sebagai bagian back-end dari project berikut : https://github.com/andrawanerlang1/Coffee-Shop-Responsive
+#background_project
+This project is the back-end or server side of this project : https://github.com/andrawanerlang1/Coffee-Shop-Responsive
+This project is created for handling user interaction with database.
 
 ## Built With
 
