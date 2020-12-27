@@ -15,6 +15,8 @@ const {
 } = require('../model/product')
 const helper = require('../helper/response')
 const qs = require('querystring')
+const redis = require('redis')
+const client = redis.createClient()
 
 module.exports = {
   getProduct: async (request, response) => {
@@ -33,8 +35,8 @@ module.exports = {
       const totalData = productName
         ? await getProductNameCountModel(productName)
         : category
-          ? await getProductCategoryCountModel(category)
-          : await getProductCountModel()
+        ? await getProductCategoryCountModel(category)
+        : await getProductCountModel()
       const totalPage = Math.ceil(totalData / limit)
       if (page > totalPage) {
         page = 1
@@ -65,6 +67,15 @@ module.exports = {
           ? await getProductByNameSortModel(productName, limit, offset, sort)
           : await getProductByNameModel(productName, limit, offset)
         if (result.length > 0) {
+          const newData = {
+            result,
+            pageInfo
+          }
+          client.setex(
+            `getproduct:${JSON.stringify(request.query)}`,
+            3600,
+            JSON.stringify(newData)
+          )
           return helper.response(
             response,
             200,
@@ -85,6 +96,15 @@ module.exports = {
           ? await getProductByCategorySortModel(category, limit, offset, sort)
           : await getProductByCategoryModel(category, limit, offset)
         if (result.length > 0) {
+          const newData = {
+            result,
+            pageInfo
+          }
+          client.setex(
+            `getproduct:${JSON.stringify(request.query)}`,
+            3600,
+            JSON.stringify(newData)
+          )
           return helper.response(
             response,
             200,
@@ -121,6 +141,15 @@ module.exports = {
         const result = sort
           ? await getProductSortModel(limit, offset, sort)
           : await getProductModel(limit, offset)
+        const newData = {
+          result,
+          pageInfo
+        }
+        client.setex(
+          `getproduct:${JSON.stringify(request.query)}`,
+          3600,
+          JSON.stringify(newData)
+        )
         return helper.response(
           response,
           200,
@@ -128,6 +157,25 @@ module.exports = {
           result,
           pageInfo
         )
+      }
+    } catch (error) {
+      return helper.response(response, 400, 'Bad Request', error)
+    }
+  },
+  getProductById: async (request, response) => {
+    try {
+      const { id } = request.params
+      const result = await getProductByIdModel(id)
+      if (result.length > 0) {
+        client.setex(`getproductbyid:${id}`, 3600, JSON.stringify(result))
+        return helper.response(
+          response,
+          200,
+          'Success Get Product By Id',
+          result
+        )
+      } else {
+        return helper.response(response, 404, `Product By Id : ${id} Not Found`)
       }
     } catch (error) {
       return helper.response(response, 400, 'Bad Request', error)
@@ -147,9 +195,7 @@ module.exports = {
         product_desc,
         product_stock
       } = request.body
-      if (!product_name || !product_price || !product_desc || !fav) {
-        return helper.response(response, 400, 'Please Input All Data!')
-      }
+
       const setData = {
         category_id,
         size_id,
@@ -160,7 +206,9 @@ module.exports = {
         product_name,
         product_price,
         product_desc,
-        product_stock
+        product_stock,
+        product_image: request.file === undefined ? '' : request.file.filename,
+        product_created_at: new Date()
       }
       const result = await postProductModel(setData)
       return helper.response(response, 200, 'Success Post new Product', result)
@@ -184,28 +232,18 @@ module.exports = {
         product_stock
       } = request.body
       const setData = {
-        // category_id,
-        // size_id,
-        // deliver_id,
-        // start_id,
-        // end_id,
-        // fav,
-        // product_name,
-        // product_price,
-        // product_desc,
-        // product_stock,
+        category_id,
+        size_id,
+        deliver_id,
+        start_id,
+        end_id,
+        fav,
+        product_name,
+        product_price,
+        product_desc,
+        product_stock,
         product_updated_at: new Date()
       }
-      category_id ? (setData.category_id = category_id) : setData
-      size_id ? (setData.size_id = size_id) : setData
-      deliver_id ? (setData.deliver_id = deliver_id) : setData
-      start_id ? (setData.start_id = start_id) : setData
-      end_id ? (setData.end_id = end_id) : setData
-      fav ? (setData.fav = fav) : setData
-      product_name ? (setData.product_name = product_name) : setData
-      product_price ? (setData.product_price = product_price) : setData
-      product_desc ? (setData.product_desc = product_desc) : setData
-      product_stock ? (setData.product_stock = product_stock) : setData
       const checkId = await getProductByIdModel(id)
       if (checkId.length > 0) {
         // proses update data
