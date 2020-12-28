@@ -17,6 +17,7 @@ const helper = require('../helper/response')
 const qs = require('querystring')
 const redis = require('redis')
 const client = redis.createClient()
+const fs = require('fs')
 
 module.exports = {
   getProduct: async (request, response) => {
@@ -189,7 +190,6 @@ module.exports = {
         deliver_id,
         start_id,
         end_id,
-        fav,
         product_name,
         product_price,
         product_desc,
@@ -202,7 +202,6 @@ module.exports = {
         deliver_id,
         start_id,
         end_id,
-        fav,
         product_name,
         product_price,
         product_desc,
@@ -242,10 +241,21 @@ module.exports = {
         product_price,
         product_desc,
         product_stock,
+        product_image: request.file === undefined ? '' : request.file.filename,
         product_updated_at: new Date()
       }
       const checkId = await getProductByIdModel(id)
       if (checkId.length > 0) {
+        const image = checkId[0].product_image
+        await fs.unlink(`./uploads/${image}`, (err) => {
+          if (!err) {
+            console.log(
+              `successfully updated ${image} with ${setData.product_image}`
+            )
+          } else {
+            console.log('Image that would be deleted does not exist')
+          }
+        })
         // proses update data
         const result = await patchProductModel(setData, id)
         return helper.response(
@@ -269,12 +279,21 @@ module.exports = {
     try {
       const { id } = request.params
       const checkId = await getProductByIdModel(id)
+
       if (checkId.length > 0) {
+        const image = checkId[0].product_image
+        fs.unlink(`./uploads/${image}`, (err) => {
+          if (!err) {
+            console.log(`successfully deleted ${image}`)
+          } else {
+            console.log('Image that would be deleted does not exist')
+          }
+        })
         const result = await deleteProductModel(id)
         return helper.response(
           response,
           200,
-          `Succeed Deleting the Product by id ${id}`,
+          `Succeed Deleting the Product by id ${id} and image ${image}`,
           result
         )
       } else {

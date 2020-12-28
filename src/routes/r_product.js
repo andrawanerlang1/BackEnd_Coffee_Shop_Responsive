@@ -28,6 +28,7 @@ router.patch(
   '/:id',
   authorization,
   isAdmin,
+  uploadImage,
   clearDataProductRedis,
   patchProduct
 )
