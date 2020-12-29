@@ -53,7 +53,7 @@ module.exports = {
     })
   },
   getCouponRedis: (request, response, next) => {
-    client.get(`getcouponall`, (error, result) => {
+    client.get('getcouponall', (error, result) => {
       if (!error && result != null) {
         return helper.response(
           response,

@@ -3,8 +3,8 @@ require('dotenv').config()
 const connection = mysql.createConnection({
   host: process.env.host,
   user: process.env.user,
-  password: '',
-  database: 'coffee_shop',
+  password: process.env.password,
+  database: process.env.database,
   timezone: 'UTC'
 })
 

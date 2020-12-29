@@ -1,4 +1,4 @@
-const router = require('Express').Router()
+const router = require('express').Router()
 const uploadImage = require('../middleware/multer')
 const { authorization, isAdmin } = require('../middleware/auth')
 const {
