@@ -1,4 +1,6 @@
 const router = require('express').Router()
+const { authorization, isAdmin } = require('../middleware/auth')
+
 const {
   getHistory,
   postHistory,
@@ -6,9 +8,9 @@ const {
   patchHistory
 } = require('../controller/c_history')
 
-router.get('/', getHistory)
-router.post('/', postHistory)
-router.delete('/', deleteHistory)
-router.patch('/', patchHistory)
+router.get('/', authorization, getHistory)
+router.post('/', authorization, postHistory)
+router.delete('/', authorization, deleteHistory)
+router.patch('/', authorization, isAdmin, patchHistory)
 
 module.exports = router

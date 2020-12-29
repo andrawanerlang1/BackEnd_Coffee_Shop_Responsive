@@ -10,6 +10,7 @@ const helper = require('../helper/response')
 // const response = require('../helper/response')
 const redis = require('redis')
 const client = redis.createClient()
+const fs = require('fs')
 
 module.exports = {
   postCoupon: async (request, response) => {
@@ -34,6 +35,8 @@ module.exports = {
         coupon_discount,
         start_date,
         end_date,
+        coupon_image: request.file === undefined ? '' : request.file.filename,
+        coupon_created_at: new Date(),
         coupon_code
       }
       const result = await postCouponModel(setData)
@@ -81,11 +84,19 @@ module.exports = {
       const { id } = request.query
       const checkId = await getCouponByIdModel(id)
       if (checkId.length > 0) {
+        const image = checkId[0].coupon_image
+        fs.unlink(`./uploads/coupon/${image}`, (err) => {
+          if (!err) {
+            console.log(`successfully deleted ${image}`)
+          } else {
+            console.log('Image that would be deleted does not exist')
+          }
+        })
         const result = await deleteCouponModel(id)
         return helper.response(
           response,
           200,
-          `Succeed Deleting the Coupon by id ${id}`,
+          `Succeed Deleting the Coupon by id ${id} and image ${image}`,
           result
         )
       } else {
@@ -124,8 +135,20 @@ module.exports = {
           coupon_discount,
           start_date,
           end_date,
+          coupon_image: request.file === undefined ? '' : request.file.filename,
+          coupon_updated_at: new Date(),
           coupon_code
         }
+        const image = checkId[0].coupon_image // ====================unlink untuk menghapus image dan mengupdatenya
+        await fs.unlink(`./uploads/coupon/${image}`, (err) => {
+          if (!err) {
+            console.log(
+              `successfully updated ${image} with ${setData.coupon_image}`
+            )
+          } else {
+            console.log('Image that would be deleted does not exist')
+          }
+        })
         const result = await patchCouponModel(setData, id)
         return helper.response(response, 200, 'Success Patching Coupon', result)
       } else {
