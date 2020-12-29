@@ -32,8 +32,11 @@ This project is created for handling user interaction with database.
 Open .env file on your favorite code editor, and copy paste this code below :
 
 ```
-host = localhost  //database host
-user = root       //database user
+host = localhost
+user = root
+password = ''
+database = coffee_shop
+port = 3000
 ```
 
 ## PostMan Documentation
