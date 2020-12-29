@@ -51,5 +51,48 @@ module.exports = {
         next()
       }
     })
+  },
+  getCouponRedis: (request, response, next) => {
+    client.get(`getcouponall`, (error, result) => {
+      if (!error && result != null) {
+        return helper.response(
+          response,
+          200,
+          'Success Get Coupon with redis',
+          JSON.parse(result)
+        )
+      } else {
+        next()
+      }
+    })
+  },
+  getCouponByIdRedis: (request, response, next) => {
+    const { id } = request.params
+    client.get(`getcouponbyid:${id}`, (error, result) => {
+      if (!error && result != null) {
+        // console.log('data ada di dalam redis')
+        return helper.response(
+          response,
+          200,
+          `Success Get Coupon By Id ${id} with redis`,
+          JSON.parse(result)
+        )
+      } else {
+        // console.log('data tidak ada di dalam redis')
+        next()
+      }
+    })
+  },
+  clearDataCouponRedis: (requset, response, next) => {
+    client.keys('getcoupon*', (_error, result) => {
+      if (result.length > 0) {
+        result.forEach((value) => {
+          client.del(value)
+        })
+        next()
+      } else {
+        next()
+      }
+    })
   }
 }

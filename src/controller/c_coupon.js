@@ -1,12 +1,15 @@
 const {
   postCouponModel,
   getCouponByIdModel,
+  getCouponModel,
   deleteCouponModel,
   patchCouponModel
 } = require('../model/Coupon')
 const helper = require('../helper/response')
 // const qs = require('querystring')
 // const response = require('../helper/response')
+const redis = require('redis')
+const client = redis.createClient()
 
 module.exports = {
   postCoupon: async (request, response) => {
@@ -41,26 +44,36 @@ module.exports = {
   },
   getCoupon: async (request, response) => {
     try {
-      const { id } = request.query
-
-      const result = await getCouponByIdModel(id)
-      if (result.length > 0) {
-        return helper.response(
-          response,
-          200,
-          `Success Get Coupon with ID ${id}`,
-          result
-        )
-      } else {
-        return helper.response(
-          response,
-          404,
-          `Coupon with id : ${id} is not found`,
-          result
-        )
-      }
+      const result = await getCouponModel()
+      client.setex(`getcouponall`, 3600, JSON.stringify(result))
+      return helper.response(
+        response,
+        200,
+        `Success Get All Available Coupon `,
+        result
+      )
     } catch (error) {
       return helper.response(response, 400, 'Bad Request', error)
+    }
+  },
+  getCouponById: async (request, response) => {
+    const { id } = request.params
+    const result = await getCouponByIdModel(id)
+    if (result.length > 0) {
+      client.setex(`getcouponbyid:${id}`, 3600, JSON.stringify(result))
+      return helper.response(
+        response,
+        200,
+        `Success Get Coupon with ID ${id}`,
+        result
+      )
+    } else {
+      return helper.response(
+        response,
+        404,
+        `Coupon with id : ${id} is not found`,
+        result
+      )
     }
   },
   deleteCoupon: async (request, response) => {

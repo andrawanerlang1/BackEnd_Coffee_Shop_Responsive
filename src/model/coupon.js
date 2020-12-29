@@ -26,6 +26,13 @@ module.exports = {
       )
     })
   },
+  getCouponModel: () => {
+    return new Promise((resolve, reject) => {
+      connection.query(`SELECT * FROM coupon`, (error, result) => {
+        !error ? resolve(result) : reject(new Error(error))
+      })
+    })
+  },
   deleteCouponModel: (id) => {
     return new Promise((resolve, reject) => {
       connection.query(
