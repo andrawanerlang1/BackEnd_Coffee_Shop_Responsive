@@ -22,7 +22,7 @@ const fileFilter = (req, file, cb) => {
     cb(new Error('File must be .PNG or .JPG'), false)
   }
 }
-const maxSize = 1 * 1024 * 1024 // ini 1 mb, kalo mau 2 mb ubah angka 1 di depan jadi 2
+const maxSize = 1 * 1024 * 1024
 const upload = multer({
   storage,
   limits: { fileSize: maxSize },

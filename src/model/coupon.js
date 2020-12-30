@@ -28,7 +28,7 @@ module.exports = {
   },
   getCouponModel: () => {
     return new Promise((resolve, reject) => {
-      connection.query(`SELECT * FROM coupon`, (error, result) => {
+      connection.query('SELECT * FROM coupon', (error, result) => {
         !error ? resolve(result) : reject(new Error(error))
       })
     })

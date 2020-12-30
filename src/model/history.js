@@ -42,6 +42,16 @@ module.exports = {
       )
     })
   },
+  getHistoryTotalModel: () => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        'SELECT SUM(history_subtotal) as total_all_sell FROM history',
+        (error, result) => {
+          !error ? resolve(result) : reject(new Error(error))
+        }
+      )
+    })
+  },
   getHistoryJoinModel: (account_id) => {
     return new Promise((resolve, reject) => {
       connection.query(

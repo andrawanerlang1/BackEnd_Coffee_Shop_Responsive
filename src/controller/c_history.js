@@ -2,6 +2,7 @@ const {
   postHistoryModel,
   getHistoryByIdModel,
   deleteHistoryModel,
+  getHistoryTotalModel,
   getHistoryByAccountIdModel,
   patchHistoryModel
 } = require('../model/history')
@@ -26,7 +27,7 @@ module.exports = {
   },
   getHistory: async (request, response) => {
     try {
-      const { id, account_id } = request.query
+      const { id, account_id, total } = request.query
       if (id) {
         const result = await getHistoryByIdModel(id)
         if (result.length > 0) {
@@ -41,6 +42,16 @@ module.exports = {
             response,
             404,
             `History with id : ${id} is not found`,
+            result
+          )
+        }
+      } else if (total) {
+        const result = await getHistoryTotalModel(account_id)
+        if (result.length > 0) {
+          return helper.response(
+            response,
+            200,
+            'Success Get History Total Sell',
             result
           )
         }
