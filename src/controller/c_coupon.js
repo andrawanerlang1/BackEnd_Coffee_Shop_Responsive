@@ -4,7 +4,7 @@ const {
   getCouponModel,
   deleteCouponModel,
   patchCouponModel
-} = require('../model/Coupon')
+} = require('../model/coupon')
 const helper = require('../helper/response')
 // const qs = require('querystring')
 // const response = require('../helper/response')
