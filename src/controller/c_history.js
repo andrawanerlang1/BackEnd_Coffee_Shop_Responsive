@@ -4,7 +4,8 @@ const {
   deleteHistoryModel,
   getHistoryTotalModel,
   getHistoryByAccountIdModel,
-  patchHistoryModel
+  patchHistoryModel,
+  getHistoryRevYear
 } = require('../model/history')
 const helper = require('../helper/response')
 // const qs = require('querystring')
@@ -13,11 +14,11 @@ const helper = require('../helper/response')
 module.exports = {
   postHistory: async (request, response) => {
     try {
-      const { history_subtotal, history_payment, account_id } = request.body
+      const { history_subtotal, history_payment, user_id } = request.body
       const setData = {
         history_subtotal,
         history_payment,
-        account_id
+        user_id
       }
       const result = await postHistoryModel(setData)
       return helper.response(response, 200, 'Success Post History', result)
@@ -27,26 +28,9 @@ module.exports = {
   },
   getHistory: async (request, response) => {
     try {
-      const { id, account_id, total } = request.query
-      if (id) {
-        const result = await getHistoryByIdModel(id)
-        if (result.length > 0) {
-          return helper.response(
-            response,
-            200,
-            `Success Get History with ID ${id}`,
-            result
-          )
-        } else {
-          return helper.response(
-            response,
-            404,
-            `History with id : ${id} is not found`,
-            result
-          )
-        }
-      } else if (total) {
-        const result = await getHistoryTotalModel(account_id)
+      const { user_id, total } = request.query
+      if (total) {
+        const result = await getHistoryTotalModel()
         if (result.length > 0) {
           return helper.response(
             response,
@@ -55,23 +39,71 @@ module.exports = {
             result
           )
         }
-      } else if (account_id) {
-        const result = await getHistoryByAccountIdModel(account_id)
+      } else if (user_id) {
+        const result = await getHistoryByAccountIdModel(user_id)
         if (result.length > 0) {
           return helper.response(
             response,
             200,
-            `Success Get History with Account-ID ${account_id}`,
+            `Success Get History with user id : ${user_id}`,
             result
           )
         } else {
           return helper.response(
             response,
             404,
-            `History with account_id : ${account_id} is not found`,
+            `History with user_id : ${user_id} is not found`,
             result
           )
         }
+      }
+    } catch (error) {
+      return helper.response(response, 400, 'Bad Request', error)
+    }
+  },
+  getHistoryById: async (request, response) => {
+    try {
+      const { id } = request.params
+      const result = await getHistoryByIdModel(id)
+      if (result.length > 0) {
+        return helper.response(
+          response,
+          200,
+          `Success Get History with ID ${id}`,
+          result
+        )
+      } else {
+        return helper.response(
+          response,
+          404,
+          `History with id : ${id} is not found`,
+          result
+        )
+      }
+    } catch (error) {
+      return helper.response(response, 400, 'Bad Request', error)
+    }
+  },
+  getHistoryChart: async (request, response) => {
+    try {
+      const { year } = request.query
+      const result = await getHistoryRevYear(year)
+      const revenue = result[0].Revenue_this_year
+      if (revenue) {
+        return helper.response(
+          response,
+          200,
+          `Success Get History of year ${year}`,
+          result
+        )
+      } else {
+        result[0].Revenue_this_year = 0
+        return helper.response(
+          response,
+          200,
+          `Success Get History of year ${year}`,
+          result
+        )
       }
     } catch (error) {
       return helper.response(response, 400, 'Bad Request', error)

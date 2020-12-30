@@ -23,19 +23,19 @@ module.exports = {
   getHistoryByIdModel: (id) => {
     return new Promise((resolve, reject) => {
       connection.query(
-        `SELECT account.account_display_name, account.account_adress, history.history_id, 
+        `SELECT user.user_name, user.user_address, history.history_id, 
         history.history_subtotal, history.history_payment, history.history_status FROM history INNER JOIN 
-        account ON history.account_id = account.account_id WHERE history_id = ${id}`,
+        user ON history.user_id = user.user_id WHERE history_id = ${id}`,
         (error, result) => {
           !error ? resolve(result) : reject(new Error(error))
         }
       )
     })
   },
-  getHistoryByAccountIdModel: (account_id) => {
+  getHistoryByAccountIdModel: (user_id) => {
     return new Promise((resolve, reject) => {
       connection.query(
-        `SELECT * FROM history WHERE account_id = ${account_id}`,
+        `SELECT * FROM history WHERE user_id = ${user_id}`,
         (error, result) => {
           !error ? resolve(result) : reject(new Error(error))
         }
@@ -52,10 +52,20 @@ module.exports = {
       )
     })
   },
-  getHistoryJoinModel: (account_id) => {
+  getHistoryRevYear: (year) => {
     return new Promise((resolve, reject) => {
       connection.query(
-        `SELECT  FROM history WHERE account_id = ${account_id}`,
+        `SELECT SUM(history_subtotal) as Revenue_this_year FROM history WHERE YEAR(history_created_at)=${year}`,
+        (error, result) => {
+          !error ? resolve(result) : reject(new Error(error))
+        }
+      )
+    })
+  },
+  getHistoryJoinModel: (user_id) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        `SELECT * FROM history WHERE user_id = ${user_id}`,
         (error, result) => {
           !error ? resolve(result) : reject(new Error(error))
         }

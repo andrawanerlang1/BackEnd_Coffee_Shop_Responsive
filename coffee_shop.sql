@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 29 Des 2020 pada 19.20
+-- Waktu pembuatan: 30 Des 2020 pada 10.07
 -- Versi server: 10.4.14-MariaDB
 -- Versi PHP: 7.2.34
 
@@ -95,7 +95,8 @@ CREATE TABLE `coupon` (
 
 INSERT INTO `coupon` (`coupon_id`, `coupon_name`, `coupon_price`, `coupon_desc`, `size_id`, `deliver_id`, `coupon_discount`, `start_date`, `end_date`, `coupon_image`, `coupon_code`, `coupon_created_at`, `coupon_updated_at`) VALUES
 (1, 'Cold Brews', 30000, 'Get 20% off for Cold Brew!!', 1, 7, 20, '2020-12-12', '2020-12-20', '', '4RK4D3M1', '2020-12-30 00:13:06', NULL),
-(4, 'Spaghetti Bolognese', 25000, 'Get spaghetti Bolognese for 10% off!', 2, 7, 10, '2020-12-01', '2020-12-29', '', '4ND124W4N', '2020-12-30 00:13:06', NULL);
+(4, 'Spaghetti Bolognese', 25000, 'Get spaghetti Bolognese for 10% off!', 2, 7, 10, '2020-12-01', '2020-12-29', '', '4ND124W4N', '2020-12-30 00:13:06', NULL),
+(10, 'Cold Brew', 30000, 'Get 20% off for Cold Brew!!', 1, 7, 20, '2020-12-12', '2020-12-20', '2020-12-29T18-25-04.802Zhaz.png', '4RK4D3M1', '2020-12-29 18:25:04', NULL);
 
 -- --------------------------------------------------------
 
@@ -151,7 +152,7 @@ CREATE TABLE `history` (
   `history_id` int(11) NOT NULL,
   `history_subtotal` int(11) NOT NULL,
   `history_payment` varchar(30) NOT NULL,
-  `account_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
   `history_status` int(11) NOT NULL DEFAULT 0,
   `history_created_at` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -160,10 +161,13 @@ CREATE TABLE `history` (
 -- Dumping data untuk tabel `history`
 --
 
-INSERT INTO `history` (`history_id`, `history_subtotal`, `history_payment`, `account_id`, `history_status`, `history_created_at`) VALUES
+INSERT INTO `history` (`history_id`, `history_subtotal`, `history_payment`, `user_id`, `history_status`, `history_created_at`) VALUES
 (2, 90000, 'cash', 1, 1, '2020-12-11 10:21:35'),
-(3, 190000, 'cash', 1, 0, '2020-12-13 19:00:00'),
-(5, 50000, 'cash', 1, 0, '2020-12-14 11:00:00');
+(3, 190000, 'cash', 1, 1, '2020-12-13 19:00:00'),
+(5, 50000, 'cash', 1, 0, '2020-12-14 11:00:00'),
+(7, 150000, 'cash', 1, 0, '2020-12-30 14:36:25'),
+(8, 200000, 'cash', 1, 0, '2020-12-30 14:36:34'),
+(9, 100000, 'cash', 1, 0, '2020-12-30 14:36:38');
 
 -- --------------------------------------------------------
 
@@ -242,7 +246,8 @@ INSERT INTO `product` (`product_id`, `product_name`, `product_price`, `product_d
 (29, 'Japanese coffee Premium', 25000, 'Manual cold brew with tokyo beans premium quality', 50, 1, 6, 1, 2, 1, 1, '2020-12-21 00:00:00', NULL, '', 1),
 (30, 'Japanese coffee', 25000, 'Manual cold brew with tokyo beans', 50, 1, 6, 1, 2, 1, 0, '2020-12-21 00:00:00', NULL, '', 1),
 (31, 'Taco Mexician', 22000, 'Made with fresh tortillas, this is the best taco', 100, 2, 2, 1, 2, 3, 0, '2020-12-21 00:00:00', NULL, '', 1),
-(34, 'Mie goreng', 10000, 'Digoreng dadakan nyoi', 100, 2, 4, 1, 2, 3, 0, '2020-12-21 00:00:00', NULL, '', 1);
+(34, 'Mie goreng', 10000, 'Digoreng dadakan nyoi', 100, 2, 4, 1, 2, 3, 0, '2020-12-21 00:00:00', NULL, '', 1),
+(53, 'Caramel Ice Cream', 21000, 'Fresh ice cream with caramel taste and toppings', 50, 2, 7, 2, 3, 4, 0, '2020-12-29 18:24:51', NULL, '2020-12-29T18-24-51.833Zice.png', 1);
 
 -- --------------------------------------------------------
 
@@ -429,13 +434,13 @@ ALTER TABLE `account`
 -- AUTO_INCREMENT untuk tabel `coupon`
 --
 ALTER TABLE `coupon`
-  MODIFY `coupon_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `coupon_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT untuk tabel `history`
 --
 ALTER TABLE `history`
-  MODIFY `history_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `history_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT untuk tabel `history_detail`
@@ -447,13 +452,13 @@ ALTER TABLE `history_detail`
 -- AUTO_INCREMENT untuk tabel `product`
 --
 ALTER TABLE `product`
-  MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
+  MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
 
 --
 -- AUTO_INCREMENT untuk tabel `user`
 --
 ALTER TABLE `user`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
