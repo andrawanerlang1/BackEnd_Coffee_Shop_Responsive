@@ -6,8 +6,6 @@ const {
   patchCouponModel
 } = require('../model/coupon')
 const helper = require('../helper/response')
-// const qs = require('querystring')
-// const response = require('../helper/response')
 const redis = require('redis')
 const client = redis.createClient()
 const fs = require('fs')
@@ -48,11 +46,11 @@ module.exports = {
   getCoupon: async (request, response) => {
     try {
       const result = await getCouponModel()
-      client.setex(`getcouponall`, 3600, JSON.stringify(result))
+      client.setex('getcouponall', 3600, JSON.stringify(result))
       return helper.response(
         response,
         200,
-        `Success Get All Available Coupon `,
+        'Success Get All Available Coupon',
         result
       )
     } catch (error) {
@@ -139,7 +137,7 @@ module.exports = {
           coupon_updated_at: new Date(),
           coupon_code
         }
-        const image = checkId[0].coupon_image // ====================unlink untuk menghapus image dan mengupdatenya
+        const image = checkId[0].coupon_image
         await fs.unlink(`./uploads/coupon/${image}`, (err) => {
           if (!err) {
             console.log(

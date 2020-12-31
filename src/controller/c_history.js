@@ -8,8 +8,6 @@ const {
   getHistoryRevYear
 } = require('../model/history')
 const helper = require('../helper/response')
-// const qs = require('querystring')
-// const response = require('../helper/response')
 
 module.exports = {
   postHistory: async (request, response) => {

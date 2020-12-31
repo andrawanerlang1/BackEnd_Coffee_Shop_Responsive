@@ -34,10 +34,4 @@ router.patch(
 )
 router.delete('/:id', authorization, isAdmin, deleteProduct)
 
-// router.get('/', getProductRedis, getProduct)
-// router.get('/:id', getProductByIdRedis, getProductById)
-// router.post('/', uploadImage, clearDataProductRedis, postProduct)
-// router.patch('/:id', clearDataProductRedis, patchProduct)
-// router.delete('/:id', clearDataProductRedis, deleteProduct)
-
 module.exports = router

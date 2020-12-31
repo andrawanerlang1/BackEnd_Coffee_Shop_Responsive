@@ -246,7 +246,7 @@ module.exports = {
       }
       const checkId = await getProductByIdModel(id)
       if (checkId.length > 0) {
-        const image = checkId[0].product_image // ====================unlink untuk menghapus image dan mengupdatenya
+        const image = checkId[0].product_image
         await fs.unlink(`./uploads/product/${image}`, (err) => {
           if (!err) {
             console.log(
@@ -281,7 +281,7 @@ module.exports = {
       const checkId = await getProductByIdModel(id)
 
       if (checkId.length > 0) {
-        const image = checkId[0].product_image // =============================unlink untuk menghapus image
+        const image = checkId[0].product_image
         fs.unlink(`./uploads/product/${image}`, (err) => {
           if (!err) {
             console.log(`successfully deleted ${image}`)

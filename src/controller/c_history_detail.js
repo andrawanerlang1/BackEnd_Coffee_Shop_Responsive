@@ -4,8 +4,6 @@ const {
   getHistoryByHistoryIdModel
 } = require('../model/history_detail')
 const helper = require('../helper/response')
-// const qs = require('querystring')
-// const response = require('../helper/response')
 
 module.exports = {
   postHistoryDetail: async (request, response) => {
