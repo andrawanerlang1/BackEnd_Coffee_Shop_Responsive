@@ -141,9 +141,16 @@ module.exports = {
           checkDataUser[0].user_password
         )
         if (checkPassword) {
-          const { user_id, user_email, user_role, status } = checkDataUser[0]
+          const {
+            user_id,
+            user_name,
+            user_email,
+            user_role,
+            status
+          } = checkDataUser[0]
           const payload = {
             user_id,
+            user_name,
             user_email,
             user_role,
             status

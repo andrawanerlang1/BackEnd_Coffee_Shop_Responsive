@@ -12,10 +12,32 @@ module.exports = {
       )
     })
   },
+  getProductFavModel: (limit, offset) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        'SELECT * FROM product WHERE fav = 1 LIMIT ? OFFSET ?',
+        [limit, offset],
+        (error, result) => {
+          !error ? resolve(result) : reject(new Error(error))
+        }
+      )
+    })
+  },
   getProductSortModel: (limit, offset, sort) => {
     return new Promise((resolve, reject) => {
       connection.query(
         `SELECT * FROM product ORDER BY ${sort} LIMIT ? OFFSET ?`,
+        [limit, offset],
+        (error, result) => {
+          !error ? resolve(result) : reject(new Error(error))
+        }
+      )
+    })
+  },
+  getProductFavSortModel: (limit, offset, sort) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        `SELECT * FROM product WHERE fav=1 ORDER BY ${sort} LIMIT ? OFFSET ?`,
         [limit, offset],
         (error, result) => {
           !error ? resolve(result) : reject(new Error(error))
@@ -146,6 +168,16 @@ module.exports = {
     return new Promise((resolve, reject) => {
       connection.query(
         'SELECT COUNT(*) as total FROM product',
+        (error, result) => {
+          !error ? resolve(result[0].total) : reject(new Error(error))
+        }
+      )
+    })
+  },
+  getProductFavCountModel: () => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        'SELECT COUNT(*) as total FROM product WHERE fav = 1',
         (error, result) => {
           !error ? resolve(result[0].total) : reject(new Error(error))
         }

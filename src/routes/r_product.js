@@ -32,6 +32,12 @@ router.patch(
   clearDataProductRedis,
   patchProduct
 )
-router.delete('/:id', authorization, isAdmin, deleteProduct)
+router.delete(
+  '/:id',
+  authorization,
+  isAdmin,
+  clearDataProductRedis,
+  deleteProduct
+)
 
 module.exports = router

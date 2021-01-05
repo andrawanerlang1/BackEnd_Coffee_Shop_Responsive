@@ -11,7 +11,10 @@ const {
   getProductByNameSortModel,
   deleteProductModel,
   getProductByCategoryModel,
-  getProductByCategorySortModel
+  getProductByCategorySortModel,
+  getProductFavCountModel,
+  getProductFavModel,
+  getProductFavSortModel
 } = require('../model/product')
 const helper = require('../helper/response')
 const qs = require('querystring')
@@ -26,6 +29,7 @@ module.exports = {
         page,
         limit,
         productName,
+        fav,
         productId,
         category,
         sort
@@ -37,6 +41,8 @@ module.exports = {
         ? await getProductNameCountModel(productName)
         : category
         ? await getProductCategoryCountModel(category)
+        : fav
+        ? await getProductFavCountModel()
         : await getProductCountModel()
       const totalPage = Math.ceil(totalData / limit)
       if (page > totalPage) {
@@ -138,6 +144,26 @@ module.exports = {
             result
           )
         }
+      } else if (fav) {
+        const result = sort
+          ? await getProductFavSortModel(limit, offset, sort)
+          : await getProductFavModel(limit, offset)
+        const newData = {
+          result,
+          pageInfo
+        }
+        client.setex(
+          `getproduct:${JSON.stringify(request.query)}`,
+          3600,
+          JSON.stringify(newData)
+        )
+        return helper.response(
+          response,
+          200,
+          'Success Get Product',
+          result,
+          pageInfo
+        )
       } else {
         const result = sort
           ? await getProductSortModel(limit, offset, sort)
