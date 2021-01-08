@@ -273,15 +273,19 @@ module.exports = {
       const checkId = await getProductByIdModel(id)
       if (checkId.length > 0) {
         const image = checkId[0].product_image
-        await fs.unlink(`./uploads/product/${image}`, (err) => {
-          if (!err) {
-            console.log(
-              `successfully updated ${image} with ${setData.product_image}`
-            )
-          } else {
-            console.log('Image that would be deleted does not exist')
-          }
-        })
+        if (setData.product_image) {
+          await fs.unlink(`./uploads/product/${image}`, (err) => {
+            if (!err) {
+              console.log(
+                `successfully updated ${image} with ${setData.product_image}`
+              )
+            } else {
+              console.log('Image that would be deleted does not exist')
+            }
+          })
+        } else {
+          setData.product_image = image
+        }
         // proses update data
         const result = await patchProductModel(setData, id)
         return helper.response(
