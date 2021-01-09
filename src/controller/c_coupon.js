@@ -138,15 +138,19 @@ module.exports = {
           coupon_code
         }
         const image = checkId[0].coupon_image
-        await fs.unlink(`./uploads/coupon/${image}`, (err) => {
-          if (!err) {
-            console.log(
-              `successfully updated ${image} with ${setData.coupon_image}`
-            )
-          } else {
-            console.log('Image that would be deleted does not exist')
-          }
-        })
+        if (setData.coupon_image) {
+          await fs.unlink(`./uploads/coupon/${image}`, (err) => {
+            if (!err) {
+              console.log(
+                `successfully updated ${image} with ${setData.coupon_image}`
+              )
+            } else {
+              console.log('Image that would be deleted does not exist')
+            }
+          })
+        } else {
+          setData.coupon_image = image
+        }
         const result = await patchCouponModel(setData, id)
         return helper.response(response, 200, 'Success Patching Coupon', result)
       } else {
