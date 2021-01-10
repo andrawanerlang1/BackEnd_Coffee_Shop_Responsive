@@ -26,29 +26,29 @@ module.exports = {
   registerUser: async (request, response) => {
     try {
       const {
-        user_name,
+        // user_name,
         user_email,
-        user_display_name,
-        user_first_name,
-        user_last_name,
+        // user_display_name,
+        // user_first_name,
+        // user_last_name,
         user_number,
-        user_address,
-        user_gender,
-        user_birthday,
+        // user_address,
+        // user_gender,
+        // user_birthday,
         user_password
       } = request.body
       const salt = bcrypt.genSaltSync(10)
       const encryptPassword = bcrypt.hashSync(user_password, salt)
       const setData = {
-        user_name,
+        // user_name,
         user_email,
-        user_display_name,
-        user_first_name,
-        user_last_name,
+        // user_display_name,
+        // user_first_name,
+        // user_last_name,
         user_number,
-        user_address,
-        user_gender,
-        user_birthday,
+        // user_address,
+        // user_gender,
+        // user_birthday,
         user_password: encryptPassword,
         user_created_at: new Date()
       }
