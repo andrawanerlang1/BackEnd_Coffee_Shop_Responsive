@@ -11,6 +11,7 @@ module.exports = {
       const {
         history_id,
         product_id,
+        product_name,
         size_choice_id,
         deliver_id,
         history_detail_quantity,
@@ -19,6 +20,7 @@ module.exports = {
       const setData = {
         history_id,
         product_id,
+        product_name,
         size_choice_id,
         deliver_id,
         history_detail_quantity,

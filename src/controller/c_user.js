@@ -62,7 +62,7 @@ module.exports = {
     try {
       const { id } = request.params
       const {
-        user_name,
+        // user_name,
         user_email,
         user_display_name,
         user_first_name,
@@ -70,15 +70,15 @@ module.exports = {
         user_number,
         user_address,
         user_gender,
-        user_birthday,
-        user_password,
-        user_role,
-        status
+        user_birthday
+        // user_password,
+        // user_role,
+        // status
       } = request.body
-      const salt = bcrypt.genSaltSync(10)
-      const encryptPassword = bcrypt.hashSync(user_password, salt)
+      // const salt = bcrypt.genSaltSync(10)
+      // const encryptPassword = bcrypt.hashSync(user_password, salt)
       const setData = {
-        user_name,
+        // user_name,
         user_email,
         user_display_name,
         user_first_name,
@@ -87,15 +87,45 @@ module.exports = {
         user_address,
         user_gender,
         user_birthday,
-        user_password: encryptPassword,
-        user_updated_at: new Date(),
-        user_role,
-        status
+        // user_password: encryptPassword,
+        user_updated_at: new Date()
+        // user_role,
+        // status
       }
       const checkId = await getUserByIdModel(id)
       if (checkId.length > 0) {
         const result = await editUserModel(setData, id)
         return helper.response(response, 200, 'Success edit user', result)
+      } else {
+        return helper.response(
+          response,
+          404,
+          `User with id : ${id} is not found`
+        )
+      }
+    } catch (error) {
+      return helper.response(response, 400, 'Bad Request', error)
+    }
+  },
+  editPassword: async (request, response) => {
+    try {
+      const { id } = request.params
+      const { user_password } = request.body
+      const salt = bcrypt.genSaltSync(10)
+      const encryptPassword = bcrypt.hashSync(user_password, salt)
+      const setData = {
+        user_password: encryptPassword,
+        user_updated_at: new Date()
+      }
+      const checkId = await getUserByIdModel(id)
+      if (checkId.length > 0) {
+        const result = await editUserModel(setData, id)
+        return helper.response(
+          response,
+          200,
+          'Success edit user Password',
+          result
+        )
       } else {
         return helper.response(
           response,
