@@ -108,5 +108,35 @@ module.exports = {
         }
       )
     })
+  },
+  getYearIncomeModel: () => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        'SELECT SUM(history_subtotal) AS total_income FROM history WHERE YEAR(history_created_at) = YEAR(NOW())',
+        (error, result) => {
+          !error ? resolve(result) : reject(new Error(error))
+        }
+      )
+    })
+  },
+  getWeekTotalModel: () => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        'SELECT COUNT(history_id) AS weekOrder FROM history WHERE YEARWEEK(history_created_at) = YEARWEEK(NOW())',
+        (error, result) => {
+          !error ? resolve(result) : reject(new Error(error))
+        }
+      )
+    })
+  },
+  getDailyIncomeModel: (date) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        `SELECT SUM(history_subtotal) AS total_income FROM history WHERE history_created_at LIKE '%${date}%'`,
+        (error, result) => {
+          !error ? resolve(result) : reject(new Error(error))
+        }
+      )
+    })
   }
 }

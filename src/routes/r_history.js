@@ -7,7 +7,10 @@ const {
   postHistory,
   deleteHistory,
   getHistoryById,
-  patchHistory
+  patchHistory,
+  getYearIncome,
+  getWeekTotal,
+  getDayIncome
 } = require('../controller/c_history')
 
 router.get('/', authorization, getHistory)
@@ -16,5 +19,8 @@ router.get('/:id', authorization, getHistoryById)
 router.post('/', authorization, postHistory)
 router.delete('/', authorization, deleteHistory)
 router.patch('/', authorization, isAdmin, patchHistory)
+router.post('/year', authorization, isAdmin, getYearIncome)
+router.post('/week', authorization, isAdmin, getWeekTotal)
+router.post('/day', authorization, isAdmin, getDayIncome)
 
 module.exports = router

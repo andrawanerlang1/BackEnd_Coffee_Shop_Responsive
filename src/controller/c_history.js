@@ -5,7 +5,10 @@ const {
   getHistoryTotalModel,
   getHistoryByAccountIdModel,
   patchHistoryModel,
-  getHistoryRevYear
+  getHistoryRevYear,
+  getDailyIncomeModel,
+  getYearIncomeModel,
+  getWeekTotalModel
 } = require('../model/history')
 const helper = require('../helper/response')
 
@@ -155,6 +158,42 @@ module.exports = {
       }
     } catch (error) {
       return helper.response(response, 400, 'Bad Request', error)
+    }
+  },
+  getYearIncome: async (_request, response) => {
+    try {
+      const result = await getYearIncomeModel()
+      return helper.response(
+        response,
+        200,
+        'Success get  yearly income',
+        result
+      )
+    } catch (error) {
+      return helper.response(response, 400, 'Bad Request', error)
+    }
+  },
+  getWeekTotal: async (_request, response) => {
+    try {
+      const result = await getWeekTotalModel()
+      return helper.response(
+        response,
+        200,
+        'Success get week order total',
+        result
+      )
+    } catch (error) {
+      return helper.response(response, 400, 'Bad Request', error)
+    }
+  },
+  getDayIncome: async (_request, response) => {
+    try {
+      const today = new Date().toISOString().slice(0, 10)
+      const result = await getDailyIncomeModel(today)
+      return helper.response(response, 200, 'Success get daily income', result)
+    } catch (error) {
+      console.log(error)
+      return helper.response(response, 400, 'Bad Request day', error)
     }
   }
 }
