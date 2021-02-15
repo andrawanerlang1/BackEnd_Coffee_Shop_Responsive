@@ -35,7 +35,7 @@ module.exports = {
   getHistoryByAccountIdModel: (user_id) => {
     return new Promise((resolve, reject) => {
       connection.query(
-        `SELECT * FROM history WHERE user_id = ${user_id}`,
+        `SELECT * FROM history WHERE user_id = ${user_id} ORDER BY history_created_at DESC`,
         (error, result) => {
           !error ? resolve(result) : reject(new Error(error))
         }

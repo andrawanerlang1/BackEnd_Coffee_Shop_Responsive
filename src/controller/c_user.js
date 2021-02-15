@@ -246,11 +246,18 @@ module.exports = {
               'You have not activated your account, please check your email'
             )
           } else {
-            const { user_id, user_name, user_email, status } = checkDataUser[0]
+            const {
+              user_id,
+              user_name,
+              user_email,
+              user_role,
+              status
+            } = checkDataUser[0]
             const payload = {
               user_id,
               user_name,
               user_email,
+              user_role,
               status
             }
             const token = jwt.sign(payload, 'RAHASIA', { expiresIn: '3h' })
