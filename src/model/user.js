@@ -29,6 +29,17 @@ module.exports = {
       )
     })
   },
+  getUserByTokenModel: (token) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        'SELECT * FROM user WHERE token_password = ? ',
+        token,
+        (error, result) => {
+          !error ? resolve(result) : reject(new Error(error))
+        }
+      )
+    })
+  },
   editUserModel: (setData, id) => {
     return new Promise((resolve, reject) => {
       connection.query(
@@ -38,6 +49,24 @@ module.exports = {
           if (!error) {
             const newResult = {
               user_id: id,
+              ...setData
+            }
+            resolve(newResult)
+          } else {
+            reject(new Error(error))
+          }
+        }
+      )
+    })
+  },
+  editUserByTokenModel: (setData, token) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        'UPDATE user SET ? WHERE token_password = ?',
+        [setData, token],
+        (error, result) => {
+          if (!error) {
+            const newResult = {
               ...setData
             }
             resolve(newResult)
@@ -71,6 +100,17 @@ module.exports = {
       connection.query(
         'SELECT user_id, user_name, user_email, user_password, user_role, status FROM user WHERE user_email = ? ',
         email,
+        (error, result) => {
+          !error ? resolve(result) : reject(new Error(error))
+        }
+      )
+    })
+  },
+  setTokenPasswordModel: (email, setData) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        'UPDATE user SET ? WHERE user_email = ? ',
+        [setData, email],
         (error, result) => {
           !error ? resolve(result) : reject(new Error(error))
         }

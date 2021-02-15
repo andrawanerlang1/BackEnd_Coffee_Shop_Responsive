@@ -3,11 +3,13 @@ const jwt = require('jsonwebtoken')
 const helper = require('../helper/response')
 const nodemailer = require('nodemailer')
 const {
-  registerUserModel,
   cekEmailModel,
   getUserByIdModel,
   editUserModel,
-  deleteUserModel
+  editUserByTokenModel,
+  deleteUserModel,
+  setTokenPasswordModel,
+  getUserByTokenModel
 } = require('../model/user')
 require('dotenv').config()
 
@@ -42,33 +44,92 @@ module.exports = {
           user_name,
           user_email,
           user_password: encryptPassword,
-          token_email: require('crypto').randomBytes(15).toString('hex'),
           user_created_at: new Date()
         }
         const result = await registerUserModel(setData)
-        const transporter = nodemailer.createTransport({
-          service: 'smtp.gmail.com',
-          port: 587,
-          secure: false,
-          auth: {
-            user: 'andracoffeeshop@gmail.com',
-            pass: 'perahulayar1'
-          }
-        })
-        const mailOPtion = {
-          from: `"Andra COffee Shop "`,
-          to: `${user_email}`,
-          subject: `Hello ${user_email}, Recruiter`,
-          html: `<a href="http://localhost:8081/confirm-email/${result.token_email}">Click This Button to activate your account</a>`
+        return helper.response(
+          response,
+          200,
+          `Success Register ${user_email}`,
+          result
+        )
+      }
+    } catch (error) {
+      return helper.response(response, 400, 'Bad Request', error)
+    }
+  },
+  forgotPassword: async (request, response) => {
+    try {
+      const { email } = request.body
+      const token_password = require('crypto').randomBytes(15).toString('hex')
+      const checkDataLogin = await cekEmailModel(email)
+      if (checkDataLogin.length < 1) {
+        return helper.response(
+          response,
+          400,
+          `Invalid ${email}, email is not registered `
+        )
+      }
+      const transporter = nodemailer.createTransport({
+        host: 'smtp.gmail.com',
+        port: 587,
+        secure: false,
+        auth: {
+          user: 'kostkost169@gmail.com',
+          pass: 'admin@123456'
         }
-        await transporter.sendMail(mailOPtion, (err, result) => {
-          if (err) {
-            console.log(err)
-            return helper.response(response, 400, 'Error Send Email', err)
-          } else {
-            return helper.response(response, 200, 'Success Send Email', result)
+      })
+      const mailOptions = {
+        from: '"Coffee Shop 👻" <memo.in.aja@gmail.com>',
+        to: `${email}`,
+        subject: 'Password Reset',
+        html: `<a href="http://localhost:8080/changePassword?keys=${token_password}">Click Here To Change Password</a>`
+      }
+      await transporter.sendMail(mailOptions, async function (error) {
+        if (error) {
+          console.log(error)
+          return helper.response(response, 400, 'Email not send !')
+        } else {
+          console.log('nodemailer sukses')
+          try {
+            const setData = { token_password: token_password }
+            console.log(setData)
+            console.log(email)
+            const tokenPassword = await setTokenPasswordModel(email, setData)
+            return helper.response(
+              response,
+              200,
+              `Success! check your email for futher step!`,
+              tokenPassword
+            )
+          } catch (error) {
+            return helper.response(response, 400, 'Bad Request 2', error)
           }
-        })
+        }
+      })
+    } catch (error) {
+      return helper.response(response, 400, 'Bad Request 1', error)
+    }
+  },
+  resetPassword: async (request, response) => {
+    try {
+      const { token_password, user_password } = request.body
+      const salt = bcrypt.genSaltSync(10)
+      const encryptPassword = bcrypt.hashSync(user_password, salt)
+      const setData = {
+        user_password: encryptPassword,
+        user_updated_at: new Date()
+      }
+      const checkToken = await getUserByTokenModel(token_password)
+      if (checkToken.length > 0) {
+        const result = await editUserByTokenModel(setData, token_password)
+        return helper.response(response, 200, 'Success reset Password', result)
+      } else {
+        return helper.response(
+          response,
+          404,
+          `Invalid Token ${token_password} `
+        )
       }
     } catch (error) {
       return helper.response(response, 400, 'Bad Request', error)
