@@ -9,7 +9,8 @@ const {
   editUserByTokenModel,
   deleteUserModel,
   setTokenPasswordModel,
-  getUserByTokenModel
+  getUserByTokenModel,
+  registerUserModel
 } = require('../model/user')
 require('dotenv').config()
 
@@ -29,7 +30,7 @@ module.exports = {
   },
   registerUser: async (request, response) => {
     try {
-      const { user_name, user_email, user_password } = request.body
+      const { user_email, user_password, user_number } = request.body
       const checkDataLogin = await cekEmailModel(user_email)
       if (checkDataLogin.length >= 1) {
         return helper.response(
@@ -41,11 +42,12 @@ module.exports = {
         const salt = bcrypt.genSaltSync(10)
         const encryptPassword = bcrypt.hashSync(user_password, salt)
         const setData = {
-          user_name,
           user_email,
           user_password: encryptPassword,
+          user_number,
           user_created_at: new Date()
         }
+        console.log(setData)
         const result = await registerUserModel(setData)
         return helper.response(
           response,
@@ -238,32 +240,23 @@ module.exports = {
           checkDataUser[0].user_password
         )
         if (checkPassword) {
-          console.log(checkDataUser[0].status)
-          if (checkDataUser[0].status !== 1) {
-            return helper.response(
-              response,
-              400,
-              'You have not activated your account, please check your email'
-            )
-          } else {
-            const {
-              user_id,
-              user_name,
-              user_email,
-              user_role,
-              status
-            } = checkDataUser[0]
-            const payload = {
-              user_id,
-              user_name,
-              user_email,
-              user_role,
-              status
-            }
-            const token = jwt.sign(payload, 'RAHASIA', { expiresIn: '3h' })
-            const result = { ...payload, token }
-            return helper.response(response, 200, 'Success Login!', result)
+          const {
+            user_id,
+            user_name,
+            user_email,
+            user_role,
+            status
+          } = checkDataUser[0]
+          const payload = {
+            user_id,
+            user_name,
+            user_email,
+            user_role,
+            status
           }
+          const token = jwt.sign(payload, 'RAHASIA', { expiresIn: '3h' })
+          const result = { ...payload, token }
+          return helper.response(response, 200, 'Success Login!', result)
         } else {
           return helper.response(response, 400, 'Wrong Password!')
         }
