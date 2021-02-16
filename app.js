@@ -8,7 +8,8 @@ require('dotenv').config()
 const app = express()
 app.use(cors())
 app.use(morgan('dev'))
-app.use(express.static('uploads'))
+
+app.use('/api1/fileUploadsApi1', express.static('uploads'))
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -22,7 +23,7 @@ app.use((request, response, next) => {
   next()
 })
 
-app.use('/', routesNavigation)
+app.use('/api1', routesNavigation)
 require('dotenv').config()
 
 app.get('*', (request, response) => {
