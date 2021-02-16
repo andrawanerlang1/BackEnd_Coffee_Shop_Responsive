@@ -119,10 +119,10 @@ module.exports = {
       )
     })
   },
-  getWeekTotalModel: () => {
+  getWeekIncomeModel: () => {
     return new Promise((resolve, reject) => {
       connection.query(
-        'SELECT COUNT(history_id) AS weekOrder FROM history WHERE YEARWEEK(history_created_at) = YEARWEEK(NOW())',
+        'SELECT SUM(history_subtotal) AS total_income FROM history WHERE YEARWEEK(history_created_at) = YEARWEEK(NOW())',
         (error, result) => {
           !error ? resolve(result) : reject(new Error(error))
         }
@@ -133,6 +133,16 @@ module.exports = {
     return new Promise((resolve, reject) => {
       connection.query(
         `SELECT SUM(history_subtotal) AS total_income FROM history WHERE history_created_at LIKE '%${date}%'`,
+        (error, result) => {
+          !error ? resolve(result) : reject(new Error(error))
+        }
+      )
+    })
+  },
+  getMonthlyReportModel: (month) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        `SELECT SUM(history_subtotal) AS total_income FROM history WHERE MONTH(history_created_at) = ${month} AND YEAR(history_created_at) = YEAR(NOW())`,
         (error, result) => {
           !error ? resolve(result) : reject(new Error(error))
         }
