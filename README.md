@@ -39,5 +39,7 @@ database = coffee_shop
 port = 3000
 ```
 
-## PostMan Documentation
-https://documenter.getpostman.com/view/13455063/TVsoGVft
+
+## License
+
+© [Andrawan Erlang](https://github.com/andrawanerlang1/)
